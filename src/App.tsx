@@ -14,6 +14,26 @@ function Square({
   );
 }
 
+function calculateWinner(squares: Array<string | null>): string | null {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
+}
+
 function Board({
   xIsNext,
   squares,
@@ -90,35 +110,19 @@ function App() {
         <ol>
           {history.map((_, move) => (
             <li key={move}>
-              <button onClick={() => jumpTo(move)}>
-                {move > 0 ? "Go to move #" + move : "Go to game start"}
-              </button>
+              {move === currentMove ? (
+                "You are at move #" + move
+              ) : (
+                <button onClick={() => jumpTo(move)}>
+                  {move > 0 ? "Go to move #" + move : "Go to game start"}
+                </button>
+              )}
             </li>
           ))}
         </ol>
       </div>
     </div>
   );
-}
-
-function calculateWinner(squares: Array<string | null>): string | null {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
 }
 
 export default App;
