@@ -52,7 +52,11 @@ export default function Game() {
           {historyCopy.map((history_i) => (
             <li key={history_i.move}>
               {history_i.move === currentMove ? (
-                "You are at move #" + history_i.move
+                history_i.move === 0 ? (
+                  "You are at game start"
+                ) : (
+                  "You are at move #" + history_i.move
+                )
               ) : (
                 <button onClick={() => jumpTo(history_i.move)}>
                   {history_i.move > 0
