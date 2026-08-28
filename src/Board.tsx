@@ -31,19 +31,23 @@ export default function Board({
   }
 
   const winner = calculateWinner(squares);
-  const status = winner
-    ? "Winner: " + winner
-    : "Next player: " + (xIsNext ? "X" : "O");
 
   return (
     <>
-      <div className="status">{status}</div>
+      <div className="status">
+        {winner === null
+          ? "Next player: " + (xIsNext ? "X" : "O")
+          : winner.winner === "Draw"
+            ? "Draw"
+            : "Winner: " + winner.winner}
+      </div>
       {Array.from({ length: 3 }, (_, i) => i).map((row) => (
         <div key={row} className="board-row">
           {Array.from({ length: 3 }, (_, i) => i + 3 * row).map((col) => (
             <Square
               key={col}
               value={squares[col]}
+              winner={winner?.line?.includes(col) ?? false}
               onSquareClick={() => handleClick(col)}
             />
           ))}

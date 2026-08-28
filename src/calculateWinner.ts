@@ -1,6 +1,7 @@
-export default function calculateWinner(
-  squares: Array<string | null>,
-): string | null {
+export default function calculateWinner(squares: Array<string | null>): {
+  winner: string;
+  line: Array<number> | null;
+} | null {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -14,8 +15,11 @@ export default function calculateWinner(
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return { winner: squares[a], line: lines[i] };
     }
+  }
+  if (!squares.includes(null)) {
+    return { winner: "Draw", line: null };
   }
   return null;
 }
