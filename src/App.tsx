@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+type SquareType = {
+  move: number;
+  squares: Array<string | null>;
+};
+
 function Square({
   value,
   onSquareClick,
@@ -27,7 +32,7 @@ function calculateWinner(squares: Array<string | null>): string | null {
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
   }
@@ -37,11 +42,13 @@ function calculateWinner(squares: Array<string | null>): string | null {
 function Board({
   xIsNext,
   squares,
+  currentMove,
   onPlay,
 }: {
   xIsNext: Boolean;
   squares: Array<string | null>;
-  onPlay: (nextSquares: Array<string | null>) => void;
+  currentMove: number;
+  onPlay: (nextSquares: SquareType) => void;
 }) {
   /**
    *
@@ -55,8 +62,8 @@ function Board({
     }
     // Modifying squares here modifies the array in the history array, too, but
     // we only want to add this next array to the array of history
-    const nextSquares = squares.slice(); // Shallow copy of squares
-    nextSquares[i] = xIsNext ? "X" : "O"; // Safely modify the nextSquares array
+    const nextSquares = { move: currentMove + 1, squares: squares.slice() }; // Shallow copy of squares
+    nextSquares.squares[i] = xIsNext ? "X" : "O"; // Safely modify the nextSquares array
     onPlay(nextSquares);
   }
 
@@ -98,14 +105,24 @@ function Sort({
 }
 
 function App() {
-  const [history, setHistory] = useState<Array<Array<string | null>>>([
-    Array(9).fill(null),
+  const [history, setHistory] = useState<Array<SquareType>>([
+    { move: 0, squares: Array(9).fill(null) },
   ]);
   const [currentMove, setCurrentMove] = useState<number>(0);
   const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
+  const currentSquares = history[currentMove].squares;
+  // Boolean sortSetting:
+  //  - True is ascending order
+  //  - False is descending order
+  const [sortSetting, setSortSetting] = useState<Boolean>(true);
+  // SquareType[] historyCopy:
+  //  - Same array reference as history if ascending
+  //  - Reversed copy of the array if descending
+  //  - Array.prototype.reverse is destructive, which would make it harder to
+  //    give the currentSquares hook the correct array of squares
+  const historyCopy = sortSetting ? history : history.toReversed();
 
-  function handlePlay(nextSquares: Array<string | null>) {
+  function handlePlay(nextSquares: SquareType) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
@@ -118,17 +135,28 @@ function App() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board
+          xIsNext={xIsNext}
+          squares={currentSquares}
+          currentMove={currentMove}
+          onPlay={handlePlay}
+        />
       </div>
       <div className="board-info">
+        <Sort
+          sortSetting={sortSetting}
+          onSort={() => setSortSetting(!sortSetting)}
+        />
         <ol>
-          {history.map((_, move) => (
-            <li key={move}>
-              {move === currentMove ? (
-                "You are at move #" + move
+          {historyCopy.map((history_i) => (
+            <li key={history_i.move}>
+              {history_i.move === currentMove ? (
+                "You are at move #" + history_i.move
               ) : (
-                <button onClick={() => jumpTo(move)}>
-                  {move > 0 ? "Go to move #" + move : "Go to game start"}
+                <button onClick={() => jumpTo(history_i.move)}>
+                  {history_i.move > 0
+                    ? "Go to move #" + history_i.move
+                    : "Go to game start"}
                 </button>
               )}
             </li>
