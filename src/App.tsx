@@ -1,110 +1,11 @@
 import { useState } from "react";
 
-type SquareType = {
-  move: number;
-  squares: Array<string | null>;
-};
+// Custom modules
+import type { SquareType } from "./SquareType";
+import Board from "./Board";
+import SortButton from "./SortButton";
 
-function Square({
-  value,
-  onSquareClick,
-}: {
-  value: string | null;
-  onSquareClick: () => void;
-}) {
-  return (
-    <button className="square" onClick={onSquareClick}>
-      {value}
-    </button>
-  );
-}
-
-function calculateWinner(squares: Array<string | null>): string | null {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-}
-
-function Board({
-  xIsNext,
-  squares,
-  currentMove,
-  onPlay,
-}: {
-  xIsNext: boolean;
-  squares: Array<string | null>;
-  currentMove: number;
-  onPlay: (nextSquares: SquareType) => void;
-}) {
-  /**
-   *
-   * @param i The square number
-   * @returns Void
-   */
-  function handleClick(i: number) {
-    // If the game is already won, or if the square is already filled
-    if (calculateWinner(squares) || squares[i]) {
-      return; // Do nothing
-    }
-    // Modifying squares here modifies the array in the history array, too, but
-    // we only want to add this next array to the array of history
-    const nextSquares = { move: currentMove + 1, squares: squares.slice() }; // Shallow copy of squares
-    nextSquares.squares[i] = xIsNext ? "X" : "O"; // Safely modify the nextSquares array
-    onPlay(nextSquares);
-  }
-
-  const winner = calculateWinner(squares);
-  const status = winner
-    ? "Winner: " + winner
-    : "Next player: " + (xIsNext ? "X" : "O");
-
-  return (
-    <>
-      <div className="status">{status}</div>
-      {Array.from({ length: 3 }, (_, i) => i).map((row) => (
-        <div key={row} className="board-row">
-          {Array.from({ length: 3 }, (_, i) => i + 3 * row).map((col) => (
-            <Square
-              key={col}
-              value={squares[col]}
-              onSquareClick={() => handleClick(col)}
-            />
-          ))}
-        </div>
-      ))}
-    </>
-  );
-}
-
-function Sort({
-  sortSetting,
-  onSort,
-}: {
-  sortSetting: boolean;
-  onSort: () => void;
-}) {
-  return (
-    <button className="sort" onClick={onSort}>
-      Sort moves {sortSetting ? "⬇" : "⬆"}
-    </button>
-  );
-}
-
-function App() {
+export default function Game() {
   const [history, setHistory] = useState<Array<SquareType>>([
     { move: 0, squares: Array(9).fill(null) },
   ]);
@@ -143,7 +44,7 @@ function App() {
         />
       </div>
       <div className="board-info">
-        <Sort
+        <SortButton
           sortSetting={sortSetting}
           onSort={() => setSortSetting(!sortSetting)}
         />
@@ -166,5 +67,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
