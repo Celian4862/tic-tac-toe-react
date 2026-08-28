@@ -83,6 +83,20 @@ function Board({
   );
 }
 
+function Sort({
+  sortSetting,
+  onSort,
+}: {
+  sortSetting: Boolean;
+  onSort: () => void;
+}) {
+  return (
+    <button className="sort" onClick={onSort}>
+      Sort moves {sortSetting ? "⬇" : "⬆"}
+    </button>
+  );
+}
+
 function App() {
   const [history, setHistory] = useState<Array<Array<string | null>>>([
     Array(9).fill(null),

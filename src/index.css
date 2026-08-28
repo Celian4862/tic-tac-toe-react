@@ -80,6 +80,11 @@ body {
 .status {
   margin-bottom: 10px;
 }
+
+.sort {
+  margin-left: 20px;
+}
+
 .game {
   display: flex;
   flex-direction: row;
