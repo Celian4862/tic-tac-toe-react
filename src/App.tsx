@@ -45,7 +45,7 @@ function Board({
   currentMove,
   onPlay,
 }: {
-  xIsNext: Boolean;
+  xIsNext: boolean;
   squares: Array<string | null>;
   currentMove: number;
   onPlay: (nextSquares: SquareType) => void;
@@ -94,7 +94,7 @@ function Sort({
   sortSetting,
   onSort,
 }: {
-  sortSetting: Boolean;
+  sortSetting: boolean;
   onSort: () => void;
 }) {
   return (
@@ -114,7 +114,7 @@ function App() {
   // Boolean sortSetting:
   //  - True is ascending order
   //  - False is descending order
-  const [sortSetting, setSortSetting] = useState<Boolean>(true);
+  const [sortSetting, setSortSetting] = useState<boolean>(true);
   // SquareType[] historyCopy:
   //  - Same array reference as history if ascending
   //  - Reversed copy of the array if descending
