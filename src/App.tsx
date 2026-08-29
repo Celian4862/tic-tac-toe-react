@@ -1,12 +1,12 @@
 import { useState } from "react";
 
 // Custom modules
-import type { SquareType } from "./SquareType";
+import type { HistoryType } from "./HistoryType";
 import Board from "./Board";
 import SortButton from "./SortButton";
 
 export default function Game() {
-  const [history, setHistory] = useState<Array<SquareType>>([
+  const [history, setHistory] = useState<Array<HistoryType>>([
     { move: 0, squares: Array(9).fill(null) },
   ]);
   const [currentMove, setCurrentMove] = useState<number>(0);
@@ -22,7 +22,7 @@ export default function Game() {
           xIsNext={currentMove % 2 === 0}
           squares={history[currentMove].squares}
           currentMove={currentMove}
-          onPlay={(nextSquares: SquareType) => {
+          onPlay={(nextSquares: HistoryType) => {
             const nextHistory = [
               ...history.slice(0, currentMove + 1),
               nextSquares,

@@ -1,4 +1,4 @@
-import type { SquareType } from "./SquareType";
+import type { HistoryType } from "./HistoryType";
 import Square from "./Square";
 import calculateWinner from "./calculateWinner";
 
@@ -11,7 +11,7 @@ export default function Board({
   xIsNext: boolean;
   squares: Array<string | null>;
   currentMove: number;
-  onPlay: (nextSquares: SquareType) => void;
+  onPlay: (nextSquares: HistoryType) => void;
 }) {
   /**
    *
