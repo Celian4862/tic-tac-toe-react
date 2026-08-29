@@ -10,37 +10,26 @@ export default function Game() {
     { move: 0, squares: Array(9).fill(null) },
   ]);
   const [currentMove, setCurrentMove] = useState<number>(0);
-  const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove].squares;
   // Boolean sortSetting:
   //  - True is ascending order
   //  - False is descending order
   const [sortSetting, setSortSetting] = useState<boolean>(true);
-  // SquareType[] historyCopy:
-  //  - Same array reference as history if ascending
-  //  - Reversed copy of the array if descending
-  //  - Array.prototype.reverse is destructive, which would make it harder to
-  //    give the currentSquares hook the correct array of squares
-  const historyCopy = sortSetting ? history : history.toReversed();
-
-  function handlePlay(nextSquares: SquareType) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-    setHistory(nextHistory);
-    setCurrentMove(nextHistory.length - 1);
-  }
-
-  function jumpTo(nextMove: number) {
-    setCurrentMove(nextMove);
-  }
 
   return (
     <div className="game">
       <div className="game-board">
         <Board
-          xIsNext={xIsNext}
-          squares={currentSquares}
+          xIsNext={currentMove % 2 === 0}
+          squares={history[currentMove].squares}
           currentMove={currentMove}
-          onPlay={handlePlay}
+          onPlay={(nextSquares: SquareType) => {
+            const nextHistory = [
+              ...history.slice(0, currentMove + 1),
+              nextSquares,
+            ];
+            setHistory(nextHistory);
+            setCurrentMove(nextHistory.length - 1);
+          }}
         />
       </div>
       <div className="board-info">
@@ -49,7 +38,12 @@ export default function Game() {
           onSort={() => setSortSetting(!sortSetting)}
         />
         <ol>
-          {historyCopy.map((history_i) => (
+          {/* SquareType[] copy of history:
+               - Same array reference as history if ascending
+               - Reversed copy of the array if descending
+               - Array.prototype.reverse is destructive, which would make it harder to
+                 give the currentSquares hook the correct array of squares */}
+          {(sortSetting ? history : history.toReversed()).map((history_i) => (
             <li key={history_i.move}>
               {history_i.move === currentMove ? (
                 history_i.move === 0 ? (
@@ -58,7 +52,7 @@ export default function Game() {
                   "You are at move #" + history_i.move
                 )
               ) : (
-                <button onClick={() => jumpTo(history_i.move)}>
+                <button onClick={() => setCurrentMove(history_i.move)}>
                   {history_i.move > 0
                     ? "Go to move #" + history_i.move
                     : "Go to game start"}
