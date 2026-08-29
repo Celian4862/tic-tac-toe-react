@@ -7,7 +7,7 @@ import SortButton from "./SortButton";
 
 export default function Game() {
   const [history, setHistory] = useState<Array<HistoryType>>([
-    { move: 0, squares: Array(9).fill(null) },
+    { move: 0, clickedIndex: -1, squares: Array(9).fill(null) },
   ]);
   const [currentMove, setCurrentMove] = useState<number>(0);
   // Boolean sortSetting:
@@ -41,25 +41,33 @@ export default function Game() {
           {/* SquareType[] copy of history:
                - Same array reference as history if ascending
                - Reversed copy of the array if descending
-               - Array.prototype.reverse is destructive, which would make it harder to
-                 give the currentSquares hook the correct array of squares */}
-          {(sortSetting ? history : history.toReversed()).map((history_i) => (
-            <li key={history_i.move}>
-              {history_i.move === currentMove ? (
-                history_i.move === 0 ? (
-                  "You are at game start"
+               - Array.prototype.reverse is destructive, which would make it
+                 harder to give the currentSquares hook the correct array of
+                 squares */}
+          {(sortSetting ? history : history.toReversed()).map((history_i) => {
+            const formattedMove = [
+              `move #${history_i.move} `,
+              `(${Math.floor(history_i.clickedIndex / 3) + 1}, `,
+              `${(history_i.clickedIndex % 3) + 1})`,
+            ].join("");
+            return (
+              <li key={history_i.move}>
+                {history_i.move === currentMove ? (
+                  history_i.move === 0 ? (
+                    "You are at game start"
+                  ) : (
+                    `You are at ${formattedMove}`
+                  )
                 ) : (
-                  "You are at move #" + history_i.move
-                )
-              ) : (
-                <button onClick={() => setCurrentMove(history_i.move)}>
-                  {history_i.move > 0
-                    ? "Go to move #" + history_i.move
-                    : "Go to game start"}
-                </button>
-              )}
-            </li>
-          ))}
+                  <button onClick={() => setCurrentMove(history_i.move)}>
+                    {history_i.move > 0
+                      ? `Go to ${formattedMove}`
+                      : "Go to game start"}
+                  </button>
+                )}
+              </li>
+            );
+          })}
         </ol>
       </div>
     </div>

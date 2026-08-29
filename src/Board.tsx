@@ -24,8 +24,13 @@ export default function Board({
       return; // Do nothing
     }
     // Shallow copy of squares
-    const nextSquares = { move: currentMove + 1, squares: squares.slice() };
-    nextSquares.squares[i] = xIsNext ? "X" : "O"; // Safely modify the nextSquares array
+    const nextSquares = {
+      move: currentMove + 1,
+      clickedIndex: i,
+      squares: squares.slice(),
+    };
+    // Safely modify the nextSquares array
+    nextSquares.squares[i] = xIsNext ? "X" : "O";
     onPlay(nextSquares);
   }
 
