@@ -40,16 +40,19 @@ export default function Board({
             ? "Draw"
             : "Winner: " + winner.winner}
       </div>
-      {Array.from({ length: 3 }, (_, i) => i).map((row) => (
+      {[0, 1, 2].map((row) => (
         <div key={row} className="board-row">
-          {Array.from({ length: 3 }, (_, i) => i + 3 * row).map((col) => (
-            <Square
-              key={col}
-              value={squares[col]}
-              winner={winner?.line?.includes(col) ?? false}
-              onSquareClick={() => handleClick(col)}
-            />
-          ))}
+          {[0, 1, 2].map((i) => {
+            const cellIndex = i + 3 * row;
+            return (
+              <Square
+                key={cellIndex}
+                value={squares[cellIndex]}
+                winner={winner?.line?.includes(cellIndex) ?? false}
+                onSquareClick={() => handleClick(cellIndex)}
+              />
+            );
+          })}
         </div>
       ))}
     </>
